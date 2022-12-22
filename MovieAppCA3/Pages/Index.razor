@@ -11,16 +11,14 @@
 Find a movie to watch
 <br/>
 
-<nav class="navbar navbar-expand-sm bg-light justify-content-center">
+<nav class="navbar navbar-expand justify-content-center">
     <EditForm EditContext="@edit" OnSubmit="HandleSearch">
         <DataAnnotationsValidator />
         <ValidationSummary />
-        <div class="d-flex">
-            <label>
-                <input class="form-control me-2" placeholder="Search Recipes" @bind-value="searchWord.SearchWord">
-            </label>
-            <button class="btn btn-primary" type="submit">Search</button>
-        </div>
+        <label>
+            <input class="form-control me-2" placeholder="Search Recipes" @bind-value="searchWord.SearchWord">
+        </label>
+        <button class="btn btn-primary" type="submit">Search Movie</button>
     </EditForm>
 </nav>
 
