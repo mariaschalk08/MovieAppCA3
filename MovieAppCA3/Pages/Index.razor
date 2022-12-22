@@ -85,7 +85,7 @@ Find a movie to watch
                 Movies = await MoviesService.SearchforMovie(searchWord);
                 if (Movies != null)
                 {
-                    CountMovies = Movies.Count.ToString() + " recepies found for " + searchWord.SearchWord;
+                    CountMovies = Movies.Count.ToString() + " results for " + searchWord.SearchWord;
                     SortedMovies = Movies.OrderBy(r => r.Title).ToList<MoviesItem>();
                 }
                 searchWord.SearchWord = "";
