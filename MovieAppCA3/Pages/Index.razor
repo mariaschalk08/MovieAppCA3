@@ -1,9 +1,99 @@
 ﻿@page "/"
+@using MovieAppCA3.Movies
+@inject IMoviesService MoviesService
+@using System.ComponentModel.DataAnnotations;
+
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Movies</h1>
 
-Welcome to your new app.
+Find a movie to watch
+<br/>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<nav class="navbar navbar-expand-sm bg-light justify-content-center">
+    <EditForm EditContext="@edit" OnSubmit="HandleSearch">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="d-flex">
+            <label>
+                <input class="form-control me-2" placeholder="Search Recipes" @bind-value="searchWord.SearchWord">
+            </label>
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </EditForm>
+</nav>
+
+<div>
+    @if(Movies == null) 
+    {
+        <p>Loading Movies...</p>
+    }
+    else 
+    {
+        <div class="row">
+            @foreach(var movie in Movies)
+            {
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@movie.Title</h5>
+                            <p class="card-text">@movie.Type</p>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+</div>
+@if(!string.IsNullOrEmpty(Error)) 
+{
+    <p>@Error</p>
+}
+
+@code{
+    public List<MoviesItem>? Movies { get; set; }
+    public string? Error { get; set; }
+    public SearchforMovie searchWord = new SearchforMovie();
+    private EditContext? edit;
+    public string? ErrorMessage { get; set; }
+    public List<MoviesItem>? SortedMovies { get; set; }
+    public string? CountMovies { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try{
+            Movies = await MoviesService.GetMovies(searchWord);
+        }
+        catch(Exception e)
+        {
+            Error = e.Message;
+        }
+
+    }
+
+    private async Task HandleSearch()
+    {
+        if (edit != null && edit.Validate())
+        {
+            try
+            {
+                ErrorMessage = "";
+                Movies = new List<MoviesItem>();
+
+                Movies = await MoviesService.SearchforMovie(searchWord);
+                if (Movies != null)
+                {
+                    CountMovies = Movies.Count.ToString() + " recepies found for " + searchWord.SearchWord;
+                    SortedMovies = Movies.OrderBy(r => r.Title).ToList<MoviesItem>();
+                }
+                searchWord.SearchWord = "";
+            }
+            catch (Exception e)
+            {
+                ErrorMessage = e.Message;
+            }
+        }
+    }
+}
